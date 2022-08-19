@@ -47,7 +47,7 @@ class _FormularioPageState extends State<FormularioPage> {
     String tipoRacao = selectedItem;
 
     Anotacao anotacao;
-    anotacao = Anotacao(numeroAv, numeroLote, tipoRacao, dataFormatada,
+    anotacao = Anotacao(numeroLote, numeroAv, tipoRacao, dataFormatada,
         quantidade, nomeMotorista);
     int resultado = await _db.salvarAnotacao(anotacao);
 
@@ -121,13 +121,17 @@ class _FormularioPageState extends State<FormularioPage> {
                   keyboardType: TextInputType.number,
                   validator: Validatorless.required('Campo obrigatório'),
                 ),
+                const Padding(padding: EdgeInsets.only(bottom: 10)),
                 TextFormField(
                   controller: _dataEntregaControler,
-                  decoration:
-                      const InputDecoration(labelText: 'data de entrega'),
+                  decoration: const InputDecoration(
+                      labelText: 'data de entrega',
+                      border: OutlineInputBorder(),
+                      hintText: "Data no formato xx/xx/xxxx"),
                   keyboardType: TextInputType.datetime,
                   validator: Validatorless.required('Campo obrigatório'),
                 ),
+                const Padding(padding: EdgeInsets.only(bottom: 10)),
                 TextFormField(
                   controller: _quatidadeControler,
                   decoration:
