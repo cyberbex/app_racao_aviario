@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:racao_av/validators.dart';
 import 'package:validatorless/validatorless.dart';
 
 import '../helper.dart/anotacao_helper.dart';
@@ -59,14 +60,14 @@ class _FormularioPageState extends State<FormularioPage> {
     _nomeMotoristaControler.clear();
   }
 
-  @override
-  void dispose() {
+  //@override
+  /* void dispose() {
     _numeroLoteControler.dispose();
     _dataEntregaControler.dispose();
     _quatidadeControler.dispose();
     _nomeMotoristaControler.dispose();
     super.dispose();
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -74,82 +75,97 @@ class _FormularioPageState extends State<FormularioPage> {
       appBar: AppBar(
         title: const Text('Formulário nota Ração'),
       ),
-      body: Column(
-        //mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Padding(padding: EdgeInsets.all(8.0)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              //const Padding(padding: EdgeInsets.all(10.0)),
-              DropdownButton(
-                value: selectedItem,
-                items: items
-                    .map(
-                      (item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item, style: const TextStyle(fontSize: 24)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (item) =>
-                    setState(() => selectedItem = item as String),
-              ),
-              DropdownButton(
-                value: selectedItem2,
-                items: items2
-                    .map(
-                      (item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item, style: const TextStyle(fontSize: 24)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (item) =>
-                    setState(() => selectedItem2 = item as String),
-              ),
-            ],
-          ),
-          Form(
-            key: _formKey,
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const Padding(padding: EdgeInsets.all(8.0)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextFormField(
-                  controller: _numeroLoteControler,
-                  decoration:
-                      const InputDecoration(labelText: 'numero do Lote'),
-                  keyboardType: TextInputType.number,
-                  validator: Validatorless.required('Campo obrigatório'),
+                //const Padding(padding: EdgeInsets.all(10.0)),
+                DropdownButton(
+                  value: selectedItem,
+                  items: items
+                      .map(
+                        (item) => DropdownMenuItem<String>(
+                          value: item,
+                          child:
+                              Text(item, style: const TextStyle(fontSize: 24)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (item) =>
+                      setState(() => selectedItem = item as String),
                 ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
-                TextFormField(
-                  controller: _dataEntregaControler,
-                  decoration: const InputDecoration(
-                      labelText: 'data de entrega',
-                      border: OutlineInputBorder(),
-                      hintText: "Data no formato xx/xx/xxxx"),
-                  keyboardType: TextInputType.datetime,
-                  validator: Validatorless.required('Campo obrigatório'),
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
-                TextFormField(
-                  controller: _quatidadeControler,
-                  decoration:
-                      const InputDecoration(labelText: 'quantidade ração'),
-                  keyboardType: TextInputType.number,
-                  validator: Validatorless.required('Campo obrigatório'),
-                ),
-                TextFormField(
-                  controller: _nomeMotoristaControler,
-                  decoration:
-                      const InputDecoration(labelText: 'nome do motorista'),
-                  keyboardType: TextInputType.text,
-                  validator: Validatorless.required('Campo obrigatório'),
+                DropdownButton(
+                  value: selectedItem2,
+                  items: items2
+                      .map(
+                        (item) => DropdownMenuItem<String>(
+                          value: item,
+                          child:
+                              Text(item, style: const TextStyle(fontSize: 24)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (item) =>
+                      setState(() => selectedItem2 = item as String),
                 ),
               ],
             ),
-          ),
-        ],
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const Padding(padding: EdgeInsets.all(10)),
+                  TextFormField(
+                    controller: _numeroLoteControler,
+                    decoration: const InputDecoration(
+                      labelText: 'numero do Lote',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: Validatorless.required('Campo obrigatório'),
+                  ),
+                  const Padding(padding: EdgeInsets.all(5)),
+                  TextFormField(
+                    controller: _dataEntregaControler,
+                    decoration: const InputDecoration(
+                        labelText: 'data de entrega',
+                        border: OutlineInputBorder(),
+                        hintText: "Data no formato xx/xx/xxxx"),
+                    keyboardType: TextInputType.datetime,
+                    validator: Validatorless.multiple([
+                      Validatorless.required('Senha Obrigatória'),
+                      Validators.validaData('Data Invalida')
+                    ]),
+                  ),
+                  const Padding(padding: EdgeInsets.all(5)),
+                  TextFormField(
+                    controller: _quatidadeControler,
+                    decoration: const InputDecoration(
+                      labelText: 'quantidade ração',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: Validatorless.required('Campo obrigatório'),
+                  ),
+                  const Padding(padding: EdgeInsets.all(5)),
+                  TextFormField(
+                    controller: _nomeMotoristaControler,
+                    decoration: const InputDecoration(
+                      labelText: 'nome do motorista',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.text,
+                    validator: Validatorless.required('Campo obrigatório'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,

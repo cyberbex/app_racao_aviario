@@ -14,9 +14,10 @@ class ListaAv722 extends StatefulWidget {
 class _ListaAv722State extends State<ListaAv722> {
   final _db = AnotacaoHelper();
   List<Anotacao> _listaAv722 = [];
+  int total = 0;
 
   _recuperarAnotacoes() async {
-    List anotacoesRecuperadas = await _db.recuperarAnotacoes();
+    List anotacoesRecuperadas = await _db.recuperaNotasAviarios(722);
     List<Anotacao> listaTemporaria = [];
     for (var item in anotacoesRecuperadas) {
       Anotacao anotacao = Anotacao.fromMap(item);
@@ -26,7 +27,21 @@ class _ListaAv722State extends State<ListaAv722> {
       _listaAv722 = listaTemporaria;
     });
 
-    print("recuperar anotacoes: $anotacoesRecuperadas");
+    //print("recuperar anotacoes: $anotacoesRecuperadas");
+  }
+
+  _somaTotalRacao() async {
+    List anotacoesRecuperadas = await _db.recuperaNotasAviarios(722);
+    List<Anotacao> listaTemporaria = [];
+    total = 0;
+    for (var item in anotacoesRecuperadas) {
+      Anotacao anotacao = Anotacao.fromMap(item);
+      listaTemporaria.add(anotacao);
+    }
+    for (var lista in listaTemporaria) {
+      total += lista.quantidade;
+    }
+    return total;
   }
 
   @override
@@ -34,6 +49,7 @@ class _ListaAv722State extends State<ListaAv722> {
     // TODO: implement initState
     super.initState();
     _recuperarAnotacoes();
+    _somaTotalRacao();
   }
 
   _formatarData(String data) {
@@ -43,6 +59,28 @@ class _ListaAv722State extends State<ListaAv722> {
     DateTime dataConvertida = DateTime.parse(data);
     String dataFormatada = formatador.format(dataConvertida);
     return dataFormatada;
+  }
+
+  _mostraTotalRacao() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Total Ração Consumida'),
+            content: Card(
+              child: Text(
+                '$total Kg',
+                style: const TextStyle(fontSize: 25),
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              )
+            ],
+          );
+        });
   }
 
   @override
@@ -74,7 +112,19 @@ class _ListaAv722State extends State<ListaAv722> {
                   );
                 }),
           ),
+          //ElevatedButton(onPressed: () {}, child: const Text('Total Ração'))
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          _somaTotalRacao();
+          _mostraTotalRacao();
+        },
+        label: const Text(
+          'Total ração',
+          style: TextStyle(letterSpacing: 0, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

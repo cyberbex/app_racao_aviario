@@ -55,4 +55,12 @@ class AnotacaoHelper {
     List anotacoes = await bancoDados.rawQuery(sql);
     return anotacoes;
   }
+
+  recuperaNotasAviarios(int numeroAviario) async {
+    var bancoDados = await db;
+    String sql = "SELECT * FROM $nomeTabela WHERE numeroAv = $numeroAviario";
+    List anotacoes = await bancoDados.rawQuery(sql);
+    return anotacoes;
+  }
+
 }
