@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:racao_av/helper.dart/anotacao_helper.dart';
 
 import 'package:racao_av/model/anotacao.dart';
-import 'package:racao_av/page/lista_av722.dart';
+import 'package:racao_av/page/formulario.dart';
 import 'package:intl/intl.dart';
+import 'package:racao_av/page/lista_av722.dart';
+import 'package:validatorless/validatorless.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,8 +21,11 @@ class _HomeState extends State<Home> {
   final _dataEntregaControler = TextEditingController();
   final _quatidadeControler = TextEditingController();
   final _nomeMotoristaControler = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   final _db = AnotacaoHelper();
+  List<String> items = ['Item 1', 'Item 2', 'Item 3', 'Item 4'];
+  String? selectedItem = 'Item 1';
 
   _exibirTelaCadastro() {
     showDialog(
@@ -30,70 +35,28 @@ class _HomeState extends State<Home> {
             child: AlertDialog(
               title: const Text('Adicionar Ração'),
               content: Column(mainAxisSize: MainAxisSize.max, children: [
-                TextField(
-                  controller: _numeroAvControler,
-                  autofocus: true,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Numero Aviário",
-                    hintText: "Digite numero aviário",
-                  ),
+                DropdownButton(
+                  value: selectedItem,
+                  items: items
+                      .map(
+                        (item) => DropdownMenuItem<String>(
+                          value: item,
+                          child:
+                              Text(item, style: const TextStyle(fontSize: 24)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (item) =>
+                      setState(() => selectedItem = item as String?),
                 ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
-                TextField(
-                  controller: _numeroLoteControler,
-                  autofocus: true,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Numero Lote",
-                    hintText: "Digite numero do lote",
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
-                TextField(
-                  controller: _tipoRacaoControler,
-                  autofocus: true,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Tipo de Ração",
-                    hintText: "Digite o Tipo da Ração",
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
-                TextField(
-                  controller: _quatidadeControler,
-                  autofocus: true,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    suffix: Text('Kg'),
-                    labelText: "Quantidade ração",
-                    hintText: "Digite a quantidade em kilograma",
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
-                TextField(
-                  controller: _dataEntregaControler,
-                  autofocus: true,
-                  keyboardType: TextInputType.datetime,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Data Entrega",
-                    hintText: "Digite a data de entrega",
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
-                TextField(
-                  controller: _nomeMotoristaControler,
-                  autofocus: true,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Nome Motorista",
-                    hintText: "Digite o nome do Motorista",
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _numeroLoteControler,
+                    decoration:
+                        const InputDecoration(labelText: 'numero do Lote'),
+                    keyboardType: TextInputType.number,
+                    validator: Validatorless.required('Campo obrigatório'),
                   ),
                 ),
               ]),
@@ -104,8 +67,12 @@ class _HomeState extends State<Home> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    _salvarAnotacao();
-                    Navigator.pop(context);
+                    var formValid = _formKey.currentState?.validate() ?? false;
+                    if (formValid) {
+                      //_salvarAnotacao();
+                      Navigator.pop(context);
+                      print('form validado!!');
+                    }
                   },
                   child: const Text('Salvar'),
                 ),
@@ -170,20 +137,21 @@ class _HomeState extends State<Home> {
             onPressed: () {
               Navigator.push(
                 context,
+                MaterialPageRoute(builder: (context) => const FormularioPage()),
+              );
+            },
+            child: const Text('Cadastrar nota ração'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
                 MaterialPageRoute(builder: (context) => const ListaAv722()),
               );
             },
-            child: const Text('listaAv722'),
+            child: const Text('Listar notas aviário 722'),
           ),
         ]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
-        onPressed: () {
-          _exibirTelaCadastro();
-        },
       ),
     );
   }
