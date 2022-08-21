@@ -4,8 +4,10 @@ import 'package:racao_av/helper.dart/anotacao_helper.dart';
 import 'package:racao_av/model/anotacao.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+// ignore: must_be_immutable
 class ListaAv722 extends StatefulWidget {
-  const ListaAv722({Key? key}) : super(key: key);
+  int valor;
+  ListaAv722({Key? key, required this.valor}) : super(key: key);
 
   @override
   State<ListaAv722> createState() => _ListaAv722State();
@@ -13,25 +15,30 @@ class ListaAv722 extends StatefulWidget {
 
 class _ListaAv722State extends State<ListaAv722> {
   final _db = AnotacaoHelper();
-  List<Anotacao> _listaAv722 = [];
+  List<Anotacao> _listaNotas = [];
   int total = 0;
 
+  _removerNota(int id) async {
+    await _db.removeNota(id);
+    //_recuperarAnotacoes();
+  }
+
   _recuperarAnotacoes() async {
-    List anotacoesRecuperadas = await _db.recuperaNotasAviarios(722);
+    List anotacoesRecuperadas = await _db.recuperaNotasAviarios(widget.valor);
     List<Anotacao> listaTemporaria = [];
     for (var item in anotacoesRecuperadas) {
       Anotacao anotacao = Anotacao.fromMap(item);
       listaTemporaria.add(anotacao);
     }
     setState(() {
-      _listaAv722 = listaTemporaria;
+      _listaNotas = listaTemporaria;
     });
 
     //print("recuperar anotacoes: $anotacoesRecuperadas");
   }
 
   _somaTotalRacao() async {
-    List anotacoesRecuperadas = await _db.recuperaNotasAviarios(722);
+    List anotacoesRecuperadas = await _db.recuperaNotasAviarios(widget.valor);
     List<Anotacao> listaTemporaria = [];
     total = 0;
     for (var item in anotacoesRecuperadas) {
@@ -85,31 +92,71 @@ class _ListaAv722State extends State<ListaAv722> {
 
   @override
   Widget build(BuildContext context) {
+    //final numeroAviario = _listaNotas[0].numeroAv;
     return Scaffold(
-      appBar: AppBar(title: const Text('Lista ração aviário 722')),
+      appBar: AppBar(title: Text('Lista ração aviário ${widget.valor}')),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-                itemCount: _listaAv722.length,
+                itemCount: _listaNotas.length,
                 itemBuilder: (context, index) {
-                  final lista = _listaAv722[index];
+                  final lista = _listaNotas[index];
                   return Card(
+                      child: Dismissible(
+                    background: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                    secondaryBackground: Container(
+                      color: Colors.red,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: const [
+                          Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    //direction: DismissDirection.startToEnd,
+                    onDismissed: (direction) {
+                      if (direction == DismissDirection.endToStart) {
+                        _removerNota(lista.id!);
+                      } else if (direction == DismissDirection.startToEnd) {}
+                    },
+                    key: Key(index.toString()),
                     child: ListTile(
                       title: Text(
                         "${_formatarData(lista.data)} -     ${lista.tipoRacao}",
                         style: const TextStyle(fontSize: 20),
                       ),
-                      trailing: Text(
-                        "${lista.quantidade} Kg",
-                        style: const TextStyle(fontSize: 25),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "${lista.quantidade} Kg",
+                            style: const TextStyle(fontSize: 25),
+                          ),
+                        ],
                       ),
                       subtitle: Text(
                         "Numero Av: ${lista.numeroAv}",
                         style: const TextStyle(fontSize: 15),
                       ),
                     ),
-                  );
+                  ));
                 }),
           ),
           //ElevatedButton(onPressed: () {}, child: const Text('Total Ração'))

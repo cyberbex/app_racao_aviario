@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:racao_av/page/formulario.dart';
-import 'package:racao_av/page/lista_av722.dart';
+import 'package:racao_av/page/lista_notas.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -37,10 +37,25 @@ class _HomeState extends State<Home> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ListaAv722()),
+                MaterialPageRoute(
+                    builder: (_) => ListaAv722(
+                          valor: 722,
+                        )),
               );
             },
             child: const Text('Listar notas aviário 722'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ListaAv722(
+                          valor: 723,
+                        )),
+              );
+            },
+            child: const Text('Listar notas aviário 723'),
           ),
         ]),
       ),
