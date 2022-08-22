@@ -94,7 +94,10 @@ class _ListaAv722State extends State<ListaAv722> {
   Widget build(BuildContext context) {
     //final numeroAviario = _listaNotas[0].numeroAv;
     return Scaffold(
-      appBar: AppBar(title: Text('Lista ração aviário ${widget.valor}')),
+      appBar: AppBar(
+        title: Text('Lista ração aviário ${widget.valor}'),
+        backgroundColor: Colors.green,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -164,12 +167,13 @@ class _ListaAv722State extends State<ListaAv722> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.green,
         onPressed: () {
           _somaTotalRacao();
           _mostraTotalRacao();
         },
         label: const Text(
-          'Total ração',
+          'Total',
           style: TextStyle(letterSpacing: 0, fontWeight: FontWeight.bold),
         ),
       ),

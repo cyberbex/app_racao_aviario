@@ -74,6 +74,7 @@ class _FormularioPageState extends State<FormularioPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Formulário nota Ração'),
+        backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
         child: Column(
